@@ -1,7 +1,7 @@
 import { BootstrapConsole } from 'nestjs-console';
 import { Logger } from '@nestjs/common';
 
-import { CommandsModule } from './commands/commands.module';
+import { CommandsModule } from './commands.module';
 
 const bootstrap = new BootstrapConsole({
   module: CommandsModule,
