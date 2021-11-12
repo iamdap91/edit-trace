@@ -1,18 +1,25 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
+import { BootstrapConsole } from 'nestjs-console';
 import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
 
 import { CliModule } from './cli.module';
 
-async function bootstrap() {
-  console.time('cli');
-  const app = await NestFactory.create(CliModule);
-  console.timeEnd('cli');
-  Logger.log('Done!');
-}
+const bootstrap = new BootstrapConsole({
+  module: CliModule,
+  useDecorators: true,
+});
 
-bootstrap();
+bootstrap.init().then(async (app) => {
+  console.time('Run Time');
+  try {
+    await app.init();
+    await bootstrap.boot();
+    const memUsage = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
+    Logger.log(`Memory usage ${memUsage} MB`);
+  } catch (e) {
+    Logger.error(e);
+  } finally {
+    console.timeEnd('Run Time');
+    await app.close();
+    process.exit(0);
+  }
+});
