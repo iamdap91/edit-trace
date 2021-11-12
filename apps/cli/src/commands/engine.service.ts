@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { Command } from 'nestjs-console';
+import { Command, Console } from 'nestjs-console';
 
-@Injectable()
+@Console({
+  command: 'engine',
+  alias: 'eng',
+})
 export class EngineService {
   constructor() {
     console.log('init');
@@ -9,6 +11,8 @@ export class EngineService {
 
   @Command({ command: 'test' })
   async test() {
+    console.log(11111);
+    console.log(11111);
     console.log(11111);
     console.log(11111);
     console.log(11111);

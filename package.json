@@ -5,7 +5,10 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "cli": "node -r source-map-support/register dist/apps/cli/main.js",
+    "cli:build": "nx build cli --prod",
+    "cli:build:dev": "nx build cli"
   },
   "private": true,
   "dependencies": {

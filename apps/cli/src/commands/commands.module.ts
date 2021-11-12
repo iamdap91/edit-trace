@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { EngineService } from './engine/engine.service';
+import { EngineService } from './engine.service';
 
 @Module({
   providers: [EngineService],
