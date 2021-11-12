@@ -1,0 +1,55 @@
+version: '3.7'
+services:
+  es:
+    image: elasticsearch:7.9.3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es-volume:/usr/share/elasticsearch/data
+    environment:
+      - bootstrap.memory_lock=true
+      - 'discovery.type=single-node'
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+  mysql:
+    image: mariadb:10.4.13
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_DATABASE}
+    volumes:
+      - mysql-volume:/var/lib/mysql
+
+  redis:
+    image: redis:6.0.5
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-volume:/data
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: password
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-volume:/data
+
+
+
+volumes:
+  es-volume:
+    name: es-volume
+  mysql-volume:
+    name: mysql-volume
+  redis-volume:
+    name: redis-volume
+  minio-volume:
+    name: minio-volume
+
