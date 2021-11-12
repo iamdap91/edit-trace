@@ -1,11 +1,10 @@
 import { BootstrapConsole } from 'nestjs-console';
 import { Logger } from '@nestjs/common';
 
-import { CliModule } from './cli.module';
-import { EngineService } from './commands/engine.service';
+import { CommandsModule } from './commands/commands.module';
 
 const bootstrap = new BootstrapConsole({
-  module: CliModule,
+  module: CommandsModule,
   useDecorators: true,
 });
 
@@ -13,7 +12,6 @@ bootstrap.init().then(async (app) => {
   console.time('Run Time');
   try {
     await app.init();
-    await app.get(EngineService);
     await bootstrap.boot();
     const memUsage = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
     Logger.log(`Memory usage ${memUsage} MB`);
