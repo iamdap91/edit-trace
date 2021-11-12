@@ -25,6 +25,7 @@
     "@nrwl/linter": "13.1.4",
     "@nrwl/nest": "13.1.4",
     "@nrwl/node": "13.1.4",
+    "@nrwl/nx-cloud": "^12.5.2",
     "@nrwl/tao": "13.1.4",
     "@nrwl/workspace": "13.1.4",
     "@types/jest": "27.0.2",
