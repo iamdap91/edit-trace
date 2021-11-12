@@ -1,0 +1,23 @@
+{
+  "root": "libs/config/elasticsearch",
+  "sourceRoot": "libs/config/elasticsearch/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/config/elasticsearch/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/config/elasticsearch"],
+      "options": {
+        "jestConfig": "libs/config/elasticsearch/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
