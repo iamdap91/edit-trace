@@ -9,10 +9,12 @@ import * as readline from 'readline';
 
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
 import { RedisService } from 'nestjs-redis';
+import { RedisClient } from 'nestjs-redis/dist/redis-client.provider';
+import { Redis } from 'ioredis';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
-  private redisClient;
+  private redisClient: Redis;
   constructor(private elasticsearchService: ElasticsearchService, private readonly redisService: RedisService) {
     this.redisClient = this.redisService.getClient();
   }
@@ -41,16 +43,15 @@ export class EngineService {
       const lines = await this.readFile(`${catalogPath}/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt`);
       spin.info(`${advertiser.name} 상품 수 : ${lines?.length}`);
 
-      // todo 천개씩 루프돌면서 redis에 값 있으면 single update, 아니면 bulk
-      for (const line of lines) {
-        const parsed = {
-          '@timestamp': new Date(),
-          ...ArrayToObject(
-            line.split('|').map((el) => el.trim()),
-            RAKUTEN_CATALOG_COLUMNS
-          ),
-        };
-      }
+      const productsInShop = lines.map((line) => ({
+        '@timestamp': new Date(),
+        ...ArrayToObject(
+          line.split('|').map((el) => el.trim()),
+          RAKUTEN_CATALOG_COLUMNS
+        ),
+      }));
+
+      await EngineService.batchAction(productsInShop, async (productsFragments) => {});
 
       // await EngineService.batchAction(lines, async (lineFragments) => {
       //   const bulkData = [];
@@ -67,24 +68,7 @@ export class EngineService {
       //     );
       //   }
       //
-      //   // await this.elasticsearchService.bulk({ body: bulkData });
-      //
-      //   // await this.elasticsearchService.bulk()
-      //   // for (const line of lineFragments) {
-      //   //   const parsedObject = ArrayToObject(
-      //   //     line.split('|').map((el) => el.trim()),
-      //   //     RAKUTEN_CATALOG_COLUMNS
-      //   //   );
-      //   //
-      //   //   // await this.elasticsearchService.index({
-      //   //   //   index: process.env.ELASTICSEARCH_PRODUCT_INDEX || 'products',
-      //   //   //   body: {
-      //   //   //     '@timestamp': new Date(),
-      //   //   //     ...parsedObject,
-      //   //   //   },
-      //   //   // });
-      //   // }
-      // });
+      //   await this.elasticsearchService.bulk({ body: bulkData });
     }
   }
 
