@@ -29,6 +29,7 @@ export const RAKUTEN_CATALOG_COLUMNS = [
   'pixel',
 ];
 
+// todo 이건 나중에 DB로 옮기자
 export const ADVERTISERS = [
   { name: '블루밍데일즈', mid: 13867, deliveryToKorea: true, shopCode: 'A024' },
   { name: '메이시스', mid: 37978, deliveryToKorea: true, shopCode: 'A025' },
