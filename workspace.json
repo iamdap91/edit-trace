@@ -3,6 +3,8 @@
   "projects": {
     "api": "apps/api",
     "cli": "apps/cli",
-    "config-elasticsearch": "libs/config/elasticsearch"
+    "config-elasticsearch": "libs/config/elasticsearch",
+    "config-redis": "libs/config/redis",
+    "utils": "libs/utils"
   }
 }
