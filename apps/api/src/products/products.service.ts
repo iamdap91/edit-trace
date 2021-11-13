@@ -31,7 +31,6 @@ export class ProductsService {
       },
     });
 
-    return hits;
-    // return plainToClass(ProductSerializer, body._source, { excludeExtraneousValues: true });
+    return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
   }
 }
