@@ -1,0 +1,23 @@
+{
+  "root": "libs/config/redis",
+  "sourceRoot": "libs/config/redis/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/config/redis/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/config/redis"],
+      "options": {
+        "jestConfig": "libs/config/redis/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
