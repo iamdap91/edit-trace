@@ -29,63 +29,63 @@ export class EngineService {
     ],
   })
   async updateCatalog(command: commander.Command) {
-    // const spin = createSpinner();
-    // const { catalogPath } = command.opts();
-    // const { RAKUTEN_SITE_ID } = process.env;
-    //
-    // spin.info('Downloading Catalog');
-    // await EngineService.downloadCatalog(catalogPath);
-    //
-    // for (const advertiser of ADVERTISERS) {
-    //   spin.info(`${advertiser.name} 업데이트`);
-    //   const lines = await this.readFile(`${catalogPath}/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt`);
-    //   spin.info(`${advertiser.name} 상품 수 : ${lines?.length}`);
-    //
-    //   // todo 천개씩 루프돌면서 redis에 값 있으면 single update, 아니면 bulk
-    //   for (const line of lines) {
-    //     const parsed = {
-    //       '@timestamp': new Date(),
-    //       ...ArrayToObject(
-    //         line.split('|').map((el) => el.trim()),
-    //         RAKUTEN_CATALOG_COLUMNS
-    //       ),
-    //     };
-    //   }
-    //
-    //   // await EngineService.batchAction(lines, async (lineFragments) => {
-    //   //   const bulkData = [];
-    //   //   for (const line of lineFragments) {
-    //   //     bulkData.push(
-    //   //       { index: { _index: 'product' } },
-    //   //       {
-    //   //         '@timestamp': new Date(),
-    //   //         ...ArrayToObject(
-    //   //           line.split('|').map((el) => el.trim()),
-    //   //           RAKUTEN_CATALOG_COLUMNS
-    //   //         ),
-    //   //       }
-    //   //     );
-    //   //   }
-    //   //
-    //   //   // await this.elasticsearchService.bulk({ body: bulkData });
-    //   //
-    //   //   // await this.elasticsearchService.bulk()
-    //   //   // for (const line of lineFragments) {
-    //   //   //   const parsedObject = ArrayToObject(
-    //   //   //     line.split('|').map((el) => el.trim()),
-    //   //   //     RAKUTEN_CATALOG_COLUMNS
-    //   //   //   );
-    //   //   //
-    //   //   //   // await this.elasticsearchService.index({
-    //   //   //   //   index: process.env.ELASTICSEARCH_PRODUCT_INDEX || 'products',
-    //   //   //   //   body: {
-    //   //   //   //     '@timestamp': new Date(),
-    //   //   //   //     ...parsedObject,
-    //   //   //   //   },
-    //   //   //   // });
-    //   //   // }
-    //   // });
-    // }
+    const spin = createSpinner();
+    const { catalogPath } = command.opts();
+    const { RAKUTEN_SITE_ID } = process.env;
+
+    spin.info('Downloading Catalog');
+    await EngineService.downloadCatalog(catalogPath);
+
+    for (const advertiser of ADVERTISERS) {
+      spin.info(`${advertiser.name} 업데이트`);
+      const lines = await this.readFile(`${catalogPath}/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt`);
+      spin.info(`${advertiser.name} 상품 수 : ${lines?.length}`);
+
+      // todo 천개씩 루프돌면서 redis에 값 있으면 single update, 아니면 bulk
+      for (const line of lines) {
+        const parsed = {
+          '@timestamp': new Date(),
+          ...ArrayToObject(
+            line.split('|').map((el) => el.trim()),
+            RAKUTEN_CATALOG_COLUMNS
+          ),
+        };
+      }
+
+      // await EngineService.batchAction(lines, async (lineFragments) => {
+      //   const bulkData = [];
+      //   for (const line of lineFragments) {
+      //     bulkData.push(
+      //       { index: { _index: 'product' } },
+      //       {
+      //         '@timestamp': new Date(),
+      //         ...ArrayToObject(
+      //           line.split('|').map((el) => el.trim()),
+      //           RAKUTEN_CATALOG_COLUMNS
+      //         ),
+      //       }
+      //     );
+      //   }
+      //
+      //   // await this.elasticsearchService.bulk({ body: bulkData });
+      //
+      //   // await this.elasticsearchService.bulk()
+      //   // for (const line of lineFragments) {
+      //   //   const parsedObject = ArrayToObject(
+      //   //     line.split('|').map((el) => el.trim()),
+      //   //     RAKUTEN_CATALOG_COLUMNS
+      //   //   );
+      //   //
+      //   //   // await this.elasticsearchService.index({
+      //   //   //   index: process.env.ELASTICSEARCH_PRODUCT_INDEX || 'products',
+      //   //   //   body: {
+      //   //   //     '@timestamp': new Date(),
+      //   //   //     ...parsedObject,
+      //   //   //   },
+      //   //   // });
+      //   // }
+      // });
+    }
   }
 
   private static async downloadCatalog(catalogPath: string) {
@@ -156,7 +156,7 @@ export class EngineService {
 
     await EngineService.batchAction(existingProducts, async (products) => {
       this.redisClient.sadd(
-        'ids',
+        'existingProductIds',
         products.map((product) => product._source.productId)
       );
     });
