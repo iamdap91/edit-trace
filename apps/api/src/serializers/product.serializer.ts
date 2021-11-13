@@ -1,4 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ProductSerializer {
   constructor(attributes: Partial<ProductSerializer>) {
@@ -7,61 +8,62 @@ export class ProductSerializer {
 
   @Exclude() '@timestamp': string;
 
+  @ApiProperty()
   @Expose()
-  get timeStamp() {
+  get timeStamp(): string {
     return this['@timestamp'];
   }
-  @Expose() productId: string;
+  @ApiProperty() @Expose() productId: string;
 
-  @Expose() productName: string;
+  @ApiProperty() @Expose() productName: string;
 
-  @Expose() skuNumber: string;
+  @ApiProperty() @Expose() skuNumber: string;
 
-  @Expose() primaryCategory: string;
+  @ApiProperty() @Expose() primaryCategory: string;
 
-  @Expose() secondaryCategory: string;
+  @ApiProperty() @Expose() secondaryCategory: string;
 
-  @Expose() productUrl: string;
+  @ApiProperty() @Expose() productUrl: string;
 
-  @Expose() productImageUrl: string;
+  @ApiProperty() @Expose() productImageUrl: string;
 
-  @Expose() buyUrl: string;
+  @ApiProperty() @Expose() buyUrl: string;
 
-  @Expose() shortProductDescription: string;
+  @ApiProperty() @Expose() shortProductDescription: string;
 
-  @Expose() longProductDescription: string;
+  @ApiProperty() @Expose() longProductDescription: string;
 
-  @Expose() discount: string;
+  @ApiProperty() @Expose() discount: string;
 
-  @Expose() discountType: string;
+  @ApiProperty() @Expose() discountType: string;
 
-  @Expose() salePrice: string;
+  @ApiProperty() @Expose() salePrice: string;
 
-  @Expose() retailPrice: string;
+  @ApiProperty() @Expose() retailPrice: string;
 
-  @Expose() beginDate: string;
+  @ApiProperty() @Expose() beginDate: string;
 
-  @Expose() endDate: string;
+  @ApiProperty() @Expose() endDate: string;
 
-  @Expose() brand: string;
+  @ApiProperty() @Expose() brand: string;
 
-  @Expose() shipping: string;
+  @ApiProperty() @Expose() shipping: string;
 
-  @Expose() keywords: string;
+  @ApiProperty() @Expose() keywords: string;
 
-  @Expose() manufacturerPart: string;
+  @ApiProperty() @Expose() manufacturerPart: string;
 
-  @Expose() manufacturerName: string;
+  @ApiProperty() @Expose() manufacturerName: string;
 
-  @Expose() shippingInformation: string;
+  @ApiProperty() @Expose() shippingInformation: string;
 
-  @Expose() availability: string;
+  @ApiProperty() @Expose() availability: string;
 
-  @Expose() universalProductCode: string;
+  @ApiProperty() @Expose() universalProductCode: string;
 
-  @Expose() classId: string;
+  @ApiProperty() @Expose() classId: string;
 
-  @Expose() currency: string;
+  @ApiProperty() @Expose() currency: string;
 
   @Exclude() m1: string;
 
