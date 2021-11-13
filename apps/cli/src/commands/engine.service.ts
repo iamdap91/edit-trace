@@ -127,37 +127,4 @@ export class EngineService {
       console.error(e);
     }
   }
-
-  private async cacheExistingProduct() {
-    const batchSize = 1000;
-    const existingProducts = [];
-
-    const {
-      body: { _scroll_id, hits },
-    } = await this.elasticsearchService.search({
-      index: 'products',
-      scroll: '30s',
-      size: batchSize,
-    });
-    existingProducts.push(...hits.hits);
-
-    const totalLength = hits.total.value;
-    const loopLength = totalLength / batchSize;
-    for (let i = 0; i < loopLength; i++) {
-      const {
-        body: { hits },
-      } = await this.elasticsearchService.scroll({
-        scroll_id: _scroll_id,
-        scroll: '30s',
-      });
-      existingProducts.push(...hits.hits);
-    }
-
-    await EngineService.batchAction(existingProducts, async (products) => {
-      this.redisClient.sadd(
-        'existingProductIds',
-        products.map((product) => product._source.productId)
-      );
-    });
-  }
 }
