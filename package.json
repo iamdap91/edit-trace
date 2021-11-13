@@ -19,6 +19,7 @@
     "@nestjs/core": "^7.0.0",
     "@nestjs/elasticsearch": "^8.0.0",
     "@nestjs/platform-express": "^7.0.0",
+    "@nestjs/swagger": "^5.1.4",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "commander": "^5.1.0",
@@ -30,6 +31,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "~6.6.3",
     "source-map-support": "^0.5.20",
+    "swagger-ui-express": "^4.1.6",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
