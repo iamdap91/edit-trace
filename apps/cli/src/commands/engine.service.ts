@@ -4,6 +4,7 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import * as commander from 'commander';
 import * as fs from 'fs';
 import * as readline from 'readline';
+import * as parse from 'csv-parse';
 
 const ADVERTISERS = [
   { name: '블루밍데일즈', mid: 13867, deliveryToKorea: true, shopCode: 'A024' },
@@ -39,48 +40,98 @@ export class EngineService {
     const { catalogPath } = command.opts();
     const { RAKUTEN_SITE_ID, RAKUTEN_FTP_USERNAME, RAKUTEN_FTP_PASSWORD } = process.env;
 
-    spin.info('Downloading Catalog');
-    for (const advertiser of ADVERTISERS) {
-      execSync(`wget ftp://aftp.linksynergy.com/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt.gz \
-        --ftp-user ${RAKUTEN_FTP_USERNAME} \
-        --ftp-password ${RAKUTEN_FTP_PASSWORD} \
-        -P ${catalogPath}`);
-    }
-
-    spin.info('Deflating gzip');
-    execSync(`gzip -d ${catalogPath}/*.gz`);
-
-    // spin.info('Update Index');
+    // spin.info('Downloading Catalog');
     // for (const advertiser of ADVERTISERS) {
-    //   const lines = await this.readFile(`${catalogPath}/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt`);
-    //   lines.shift();
-    //   lines.pop();
-    //   spin.info(`${advertiser.name} 상품 수 : ${lines?.length}`);
+    //   execSync(`wget ftp://aftp.linksynergy.com/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt.gz \
+    //     --ftp-user ${RAKUTEN_FTP_USERNAME} \
+    //     --ftp-password ${RAKUTEN_FTP_PASSWORD} \
+    //     -P ${catalogPath}`);
     // }
-
-    //   const loopLength = Math.ceil(lines.length / QUEUE_BULK_SIZE);
-    //   for (let i = 0; i < loopLength; i++) {
-    //     const bulkLines = lines.splice(i * QUEUE_BULK_SIZE, (i + 1) * QUEUE_BULK_SIZE);
-    //     // todo 큐에 jobId 지정
-    //     const bulkEntities = bulkLines.map((line) => this.rakutenCatalogRepo.rowToEntity(line, shopCode));
-    //     try {
-    //       await this.backendCatalogService.addBulk(bulkEntities);
-    //     } catch (e) {
-    //       spin.warn(e);
-    //     }
-    //   }
-    // }
-
-    // const insertAction = async () => {
-    //   const res = await this.elasticsearchService.index({
-    //     index: process.env.ELASTICSEARCH_PRODUCT_INDEX || 'products',
-    //     body: {},
-    //   });
     //
-    //   return !!res.body;
-    // };
-    //
-    // await EngineService.batchAction([], insertAction);
+    // spin.info('Deflating gzip');
+    // execSync(`gzip -d ${catalogPath}/*.gz`);
+
+    spin.info('Update Index');
+    for (const advertiser of ADVERTISERS) {
+      const lines = await this.readFile(`${catalogPath}/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt`);
+      lines.shift();
+      lines.pop();
+      spin.info(`${advertiser.name} 상품 수 : ${lines?.length}`);
+
+      await EngineService.batchAction(lines, async (lineFragments) => {
+        for (const line of lineFragments) {
+          const t = line.split('|').map((el) => el.trim());
+          const [
+            productId,
+            productName,
+            skuNumber,
+            primaryCategory,
+            secondaryCategory,
+            productUrl,
+            productImageUrl,
+            buyUrl,
+            shortProductDescription,
+            longProductDescription,
+            discount,
+            discountType,
+            salePrice,
+            retailPrice,
+            beginDate,
+            endDate,
+            brand,
+            shipping,
+            keywords,
+            manufacturerPart,
+            manufacturerName,
+            shippingInformation,
+            availability,
+            universalProductCode,
+            classId,
+            currency,
+            m1,
+            pixel,
+          ] = t;
+
+          console.log({
+            productId,
+            productName,
+            skuNumber,
+            primaryCategory,
+            secondaryCategory,
+            productUrl,
+            productImageUrl,
+            buyUrl,
+            shortProductDescription,
+            longProductDescription,
+            discount,
+            discountType,
+            salePrice,
+            retailPrice,
+            beginDate,
+            endDate,
+            brand,
+            shipping,
+            keywords,
+            manufacturerPart,
+            manufacturerName,
+            shippingInformation,
+            availability,
+            universalProductCode,
+            classId,
+            currency,
+            m1,
+            pixel,
+          });
+        }
+
+        // const res = await this.elasticsearchService.index({
+        //   index: process.env.ELASTICSEARCH_PRODUCT_INDEX || 'products',
+        //   body: {},
+        // });
+        // return !!res.body;
+        return true;
+      });
+    }
   }
 
   private async readFile(filePath: string): Promise<string[]> {
@@ -99,15 +150,14 @@ export class EngineService {
   }
 
   private static async batchAction<T>(data: T[], action: (dataFragments: T[]) => Promise<boolean>, batchSize = 1000) {
-    const dataToProcess = data.splice(0, batchSize);
-
-    let res;
     try {
-      res = await action(dataToProcess);
+      const loopLength = Math.ceil(data.length / batchSize);
+      for (let i = 0; i < loopLength; i++) {
+        const dataToProcess = data.splice(0, batchSize);
+        await action(dataToProcess);
+      }
     } catch (e) {
       console.error(e);
     }
-
-    return res;
   }
 }
