@@ -12,16 +12,17 @@ async function bootstrap() {
   const apiPath = 'api-docs';
   const apiDocUrl = `${url}/${apiPath}`;
 
+  // app 설정
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+  app.setGlobalPrefix('api');
 
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-
+  // swagger
   const config = new DocumentBuilder().setTitle('HIED').setDescription('하이드 API 문서').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(apiPath, app, document);
 
+  // server init
   await app.listen(process.env.PORT || 3333);
   Logger.log(`Run server mode: ${mode}, Listening at ${url}/api, API doc is ${apiDocUrl}`);
 }
