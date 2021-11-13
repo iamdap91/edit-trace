@@ -7,6 +7,7 @@ import * as readline from 'readline';
 import { Redis } from 'ioredis';
 import { flatMap } from 'lodash';
 import { RedisService } from 'nestjs-redis';
+import * as dayjs from 'dayjs';
 
 import { ArrayToObject } from '@edit-trace/utils';
 
@@ -34,10 +35,16 @@ export class EngineService {
     const spin = createSpinner();
     const { catalogPath } = command.opts();
     const { RAKUTEN_SITE_ID } = process.env;
+    const indexName = `product-${dayjs().format('YYYYMMDD')}`;
 
-    spin.info('Downloading Catalog');
+    spin.info('인덱스 생성');
+    const hasIndex = await this.createIndex(indexName);
+    if (!hasIndex) return spin.fail('인덱스 생성 실패');
+
+    spin.info('카탈로그 다운로드');
     await EngineService.downloadCatalog(catalogPath);
 
+    spin.info('상품 벌크 인서트');
     for (const advertiser of ADVERTISERS) {
       spin.info(`${advertiser.name} 업데이트`);
       const lines = await this.readFile(`${catalogPath}/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt`);
@@ -53,19 +60,40 @@ export class EngineService {
 
       await EngineService.batchAction(productsInShop, async (productFragments) => {
         await this.elasticsearchService.bulk({
-          body: flatMap(productFragments, (product) => [{ index: { _index: `product` } }, product]),
+          body: flatMap(productFragments, (product) => [{ index: { _index: indexName } }, product]),
         });
       });
     }
   }
 
+  private async createIndex(indexName: string): Promise<boolean> {
+    const {
+      body: { acknowledged },
+    } = await this.elasticsearchService.indices.create({
+      index: indexName,
+      body: {
+        settings: {
+          number_of_shards: 5,
+          number_of_replicas: process.env.MODE === 'prod' ? 1 : 0,
+        },
+        mappings: {},
+      },
+    });
+
+    return acknowledged;
+  }
+
   private static async downloadCatalog(catalogPath: string) {
     const { RAKUTEN_SITE_ID, RAKUTEN_FTP_USERNAME, RAKUTEN_FTP_PASSWORD } = process.env;
     for (const advertiser of ADVERTISERS) {
-      execSync(`wget ftp://aftp.linksynergy.com/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt.gz \
+      try {
+        execSync(`wget ftp://aftp.linksynergy.com/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt.gz \
         --ftp-user ${RAKUTEN_FTP_USERNAME} \
         --ftp-password ${RAKUTEN_FTP_PASSWORD} \
         -P ${catalogPath}`);
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     execSync(`gzip -d ${catalogPath}/*.gz`);
