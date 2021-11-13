@@ -4,21 +4,15 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import * as commander from 'commander';
 import * as fs from 'fs';
 import * as readline from 'readline';
-import { Redis } from 'ioredis';
 import { flatMap } from 'lodash';
-import { RedisService } from 'nestjs-redis';
-import * as dayjs from 'dayjs';
 
-import { ArrayToObject } from '@edit-trace/utils';
+import { ArrayToObject, productsIndexName } from '@edit-trace/utils';
 
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
-  private redisClient: Redis;
-  constructor(private elasticsearchService: ElasticsearchService, private readonly redisService: RedisService) {
-    this.redisClient = this.redisService.getClient();
-  }
+  constructor(private elasticsearchService: ElasticsearchService) {}
 
   @Command({
     command: 'update-catalog',
@@ -35,7 +29,7 @@ export class EngineService {
     const spin = createSpinner();
     const { catalogPath } = command.opts();
     const { RAKUTEN_SITE_ID } = process.env;
-    const indexName = `product-${dayjs().format('YYYYMMDD')}`;
+    const indexName = productsIndexName();
 
     spin.info('인덱스 생성');
     const hasIndex = await this.createIndex(indexName);
@@ -60,7 +54,10 @@ export class EngineService {
 
       await EngineService.batchAction(productsInShop, async (productFragments) => {
         await this.elasticsearchService.bulk({
-          body: flatMap(productFragments, (product) => [{ index: { _index: indexName } }, product]),
+          body: flatMap(productFragments, (product) => [
+            { index: { _index: indexName, _id: product.productId } },
+            product,
+          ]),
         });
       });
     }
