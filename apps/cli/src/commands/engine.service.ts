@@ -3,14 +3,14 @@ import { Console, Command, createSpinner } from 'nestjs-console';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import * as commander from 'commander';
 import * as fs from 'fs';
+import * as readline from 'readline';
+import { Redis } from 'ioredis';
+import { flatMap } from 'lodash';
+import { RedisService } from 'nestjs-redis';
+
 import { ArrayToObject } from '@edit-trace/utils';
 
-import * as readline from 'readline';
-
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
-import { RedisService } from 'nestjs-redis';
-import { RedisClient } from 'nestjs-redis/dist/redis-client.provider';
-import { Redis } from 'ioredis';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
@@ -51,24 +51,11 @@ export class EngineService {
         ),
       }));
 
-      await EngineService.batchAction(productsInShop, async (productsFragments) => {});
-
-      // await EngineService.batchAction(lines, async (lineFragments) => {
-      //   const bulkData = [];
-      //   for (const line of lineFragments) {
-      //     bulkData.push(
-      //       { index: { _index: 'product' } },
-      //       {
-      //         '@timestamp': new Date(),
-      //         ...ArrayToObject(
-      //           line.split('|').map((el) => el.trim()),
-      //           RAKUTEN_CATALOG_COLUMNS
-      //         ),
-      //       }
-      //     );
-      //   }
-      //
-      //   await this.elasticsearchService.bulk({ body: bulkData });
+      await EngineService.batchAction(productsInShop, async (productFragments) => {
+        await this.elasticsearchService.bulk({
+          body: flatMap(productFragments, (product) => [{ index: { _index: `product` } }, product]),
+        });
+      });
     }
   }
 
