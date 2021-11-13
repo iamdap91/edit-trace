@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigElasticsearchModule } from '@edit-trace/config/elasticsearch';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [ConfigElasticsearchModule],
 })
 export class AppModule {}
