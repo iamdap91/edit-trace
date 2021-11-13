@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@edit-trace/config/elasticsearch": ["libs/config/elasticsearch/src/index.ts"]
+      "@edit-trace/config/elasticsearch": ["libs/config/elasticsearch/src/index.ts"],
+      "@edit-trace/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -3,6 +3,7 @@
   "projects": {
     "api": "apps/api",
     "cli": "apps/cli",
-    "config-elasticsearch": "libs/config/elasticsearch"
+    "config-elasticsearch": "libs/config/elasticsearch",
+    "utils": "libs/utils"
   }
 }
