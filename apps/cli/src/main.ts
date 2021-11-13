@@ -1,7 +1,13 @@
 import { BootstrapConsole } from 'nestjs-console';
 import { Logger } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 import { CommandsModule } from './commands.module';
+
+if (process.env.MODE !== 'prod') {
+  dotenv.config({ path: path.join(process.env.PWD, '/.env') });
+}
 
 const bootstrap = new BootstrapConsole({
   module: CommandsModule,

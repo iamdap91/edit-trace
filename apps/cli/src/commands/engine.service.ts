@@ -2,12 +2,22 @@ import { execSync } from 'child_process';
 import { Console, Command, createSpinner } from 'nestjs-console';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import * as commander from 'commander';
+import * as fs from 'fs';
+import * as readline from 'readline';
 
-const RAKUTEN = {
-  SITE_ID: process.env.RAKUTEN_SITE_ID || '',
-  FTP_USERNAME: process.env.RAKUTEN_FTP_USERNAME || '',
-  FTP_PASSWORD: process.env.RAKUTEN_FTP_PASSWORD || '',
-};
+const ADVERTISERS = [
+  { name: '블루밍데일즈', mid: 13867, deliveryToKorea: true, shopCode: 'A024' },
+  // { name: '메이시스', mid: 37978, deliveryToKorea: true, shopCode: 'A025' },
+  { name: '매치스패션', mid: 39265, deliveryToKorea: true, shopCode: 'A006' },
+  // { name: '스플렌디드', mid: 42623, deliveryToKorea: true, shopCode: 'A035' },
+  // { name: '앤 테일러', mid: 43432, deliveryToKorea: true, shopCode: 'B003' },
+  // { name: '샵밥', mid: 43802, deliveryToKorea: true, shopCode: 'A017' },
+  // { name: '이스트데인', mid: 43804, deliveryToKorea: true, shopCode: 'A027' },
+  // { name: '더 더블 에프', mid: 44328, deliveryToKorea: true, shopCode: 'A033' },
+  // { name: '하비니콜스', mid: 44787, deliveryToKorea: true, shopCode: 'A011' },
+  // { name: '칼토티 부티크', mid: 45516, deliveryToKorea: true, shopCode: 'A044' },
+  // { name: '유케이사커샵', mid: 46108, deliveryToKorea: true, shopCode: 'A036' },
+];
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
@@ -27,18 +37,26 @@ export class EngineService {
   async updateCatalog(command: commander.Command) {
     const spin = createSpinner();
     const { catalogPath } = command.opts();
+    const { RAKUTEN_SITE_ID, RAKUTEN_FTP_USERNAME, RAKUTEN_FTP_PASSWORD } = process.env;
 
-    const advertiser = { mid: '' };
-
-    execSync(`wget ftp://aftp.linksynergy.com/${advertiser.mid}_${RAKUTEN.SITE_ID}_mp.txt.gz \
-        --ftp-user ${RAKUTEN.FTP_USERNAME} \
-        --ftp-password ${RAKUTEN.FTP_PASSWORD} \
+    spin.info('Downloading Catalog');
+    for (const advertiser of ADVERTISERS) {
+      execSync(`wget ftp://aftp.linksynergy.com/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt.gz \
+        --ftp-user ${RAKUTEN_FTP_USERNAME} \
+        --ftp-password ${RAKUTEN_FTP_PASSWORD} \
         -P ${catalogPath}`);
+    }
 
-    // const lines = await this.readFile(`${catalogPath}/${mid}_${RAKUTEN_SITE_ID}_mp.txt`);
-    // lines.shift();
-    // lines.pop();
-    // spin.info(`${lines?.length}`);
+    spin.info('Deflating gzip');
+    execSync(`gzip -d ${catalogPath}/*.gz`);
+
+    // spin.info('Update Index');
+    // for (const advertiser of ADVERTISERS) {
+    //   const lines = await this.readFile(`${catalogPath}/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt`);
+    //   lines.shift();
+    //   lines.pop();
+    //   spin.info(`${advertiser.name} 상품 수 : ${lines?.length}`);
+    // }
 
     //   const loopLength = Math.ceil(lines.length / QUEUE_BULK_SIZE);
     //   for (let i = 0; i < loopLength; i++) {
@@ -52,5 +70,44 @@ export class EngineService {
     //     }
     //   }
     // }
+
+    // const insertAction = async () => {
+    //   const res = await this.elasticsearchService.index({
+    //     index: process.env.ELASTICSEARCH_PRODUCT_INDEX || 'products',
+    //     body: {},
+    //   });
+    //
+    //   return !!res.body;
+    // };
+    //
+    // await EngineService.batchAction([], insertAction);
+  }
+
+  private async readFile(filePath: string): Promise<string[]> {
+    const lines = [];
+    if (fs.existsSync(filePath)) {
+      await new Promise<void>((resolve) => {
+        const fileStream = fs.createReadStream(filePath);
+        const readLine = readline.createInterface({ input: fileStream });
+
+        readLine.on('line', async (row) => lines.push(row));
+        fileStream.on('end', () => resolve());
+        fileStream.on('error', (err) => console.error(err));
+      });
+    }
+    return lines;
+  }
+
+  private static async batchAction<T>(data: T[], action: (dataFragments: T[]) => Promise<boolean>, batchSize = 1000) {
+    const dataToProcess = data.splice(0, batchSize);
+
+    let res;
+    try {
+      res = await action(dataToProcess);
+    } catch (e) {
+      console.error(e);
+    }
+
+    return res;
   }
 }
