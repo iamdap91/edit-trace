@@ -25,4 +25,9 @@ describe('ProductsController', () => {
     expect(product.productId).toEqual('671194750660');
     expect(product['@timestamp']).toBeUndefined();
   });
+
+  it('find', async () => {
+    const products = await controller.find();
+    expect(typeof products.length).toEqual('number');
+  });
 });
