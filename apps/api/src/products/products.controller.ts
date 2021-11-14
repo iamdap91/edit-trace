@@ -9,10 +9,24 @@ import { ProductSerializer } from '../serializers';
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
+  @Get('list')
+  @ApiOperation({ summary: '상품 리스트' })
+  @ApiResponse({ status: 200, type: [ProductSerializer] })
+  async find(): Promise<ProductSerializer[]> {
+    return await this.productsService.find();
+  }
+
   @Get(':productId')
   @ApiOperation({ summary: '단일 상품 정보' })
   @ApiResponse({ status: 200, type: ProductSerializer })
   async findOne(@Param('productId') productId: string): Promise<ProductSerializer> {
     return await this.productsService.findOne(productId);
+  }
+
+  @Get(':productId/history')
+  @ApiOperation({ summary: '단일 상품 히스토리' })
+  @ApiResponse({ status: 200, type: [ProductSerializer] })
+  async findOneHistory(@Param('productId') productId: string): Promise<ProductSerializer[]> {
+    return await this.productsService.findOneHistory(productId);
   }
 }
