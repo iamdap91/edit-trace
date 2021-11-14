@@ -16,7 +16,7 @@ export class ProductsService {
     return plainToClass(ProductSerializer, body._source, { excludeExtraneousValues: true });
   }
 
-  async findOneHistory(productId: string) {
+  async findOneHistory(productId: string): Promise<ProductSerializer[]> {
     const {
       body: {
         hits: { hits },
@@ -31,6 +31,18 @@ export class ProductsService {
       },
     });
 
+    return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
+  }
+
+  async find(): Promise<ProductSerializer[]> {
+    const {
+      body: {
+        hits: { hits },
+      },
+    } = await this.elasticsearchService.search({
+      index: productsIndexName(),
+      body: { size: 20 },
+    });
     return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
   }
 }
