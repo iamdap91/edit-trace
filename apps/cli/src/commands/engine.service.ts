@@ -6,8 +6,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 import { flatMap } from 'lodash';
 
-import { ArrayToObject, productsIndexName } from '@edit-trace/utils';
-
+import { ArrayToObject, batchAction, productsIndexName } from '@edit-trace/utils';
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
 
 @Console({ name: 'engine', alias: 'eng' })
@@ -52,7 +51,7 @@ export class EngineService {
         ),
       }));
 
-      await EngineService.batchAction(productsInShop, async (productFragments) => {
+      await batchAction(productsInShop, async (productFragments) => {
         await this.elasticsearchService.bulk({
           body: flatMap(productFragments, (product) => [
             { index: { _index: indexName, _id: product.productId } },
@@ -111,17 +110,5 @@ export class EngineService {
     lines.shift();
     lines.pop();
     return lines;
-  }
-
-  private static async batchAction<T>(data: T[], action: (dataFragments: T[]) => Promise<unknown>, batchSize = 1000) {
-    try {
-      const loopLength = Math.ceil(data.length / batchSize);
-      for (let i = 0; i < loopLength; i++) {
-        const dataToProcess = data.splice(0, batchSize);
-        await action(dataToProcess);
-      }
-    } catch (e) {
-      console.error(e);
-    }
   }
 }
