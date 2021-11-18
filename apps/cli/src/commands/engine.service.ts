@@ -34,6 +34,9 @@ export class EngineService {
     const hasIndex = await this.createIndex(indexName);
     if (!hasIndex) return spin.fail('인덱스 생성 실패');
 
+    spin.info('카탈로그 삭제');
+    execSync(`rm ${catalogPath}/*`);
+
     spin.info('카탈로그 다운로드');
     await EngineService.downloadCatalog(catalogPath);
 
@@ -63,20 +66,26 @@ export class EngineService {
   }
 
   private async createIndex(indexName: string): Promise<boolean> {
-    const {
-      body: { acknowledged },
-    } = await this.elasticsearchService.indices.create({
-      index: indexName,
-      body: {
-        settings: {
-          number_of_shards: 5,
-          number_of_replicas: process.env.MODE === 'prod' ? 1 : 0,
+    let created = false;
+    try {
+      const {
+        body: { acknowledged },
+      } = await this.elasticsearchService.indices.create({
+        index: indexName,
+        body: {
+          settings: {
+            number_of_shards: 5,
+            number_of_replicas: process.env.MODE === 'prod' ? 1 : 0,
+          },
+          mappings: {},
         },
-        mappings: {},
-      },
-    });
+      });
+      created = acknowledged;
+    } catch (e) {
+      console.error(e);
+    }
 
-    return acknowledged;
+    return created;
   }
 
   private static async downloadCatalog(catalogPath: string) {
