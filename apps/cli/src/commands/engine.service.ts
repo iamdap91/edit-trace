@@ -17,8 +17,10 @@ export class EngineService {
   @Command({ command: 'run <shopCode>' })
   async run(shopCode: string) {
     const shopEngine = await EngineFactory.build(shopCode);
+    const browserOptions = EngineFactory.scan(shopEngine);
+    // await shopEngine.product();s
 
-    shopEngine.product();
+    console.log(browserOptions);
 
     return null;
   }
