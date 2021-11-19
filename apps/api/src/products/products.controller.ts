@@ -14,8 +14,8 @@ export class ProductsController {
   @ApiOperation({ summary: '상품 리스트' })
   @ApiResponse({ status: 200, type: [ProductSerializer] })
   async find(@Query() query: FindProductsDto): Promise<ProductSerializer[]> {
-    console.log(query);
-    return await this.productsService.find();
+    const { from, size } = query;
+    return await this.productsService.find(from, size);
   }
 
   @Get(':productId')

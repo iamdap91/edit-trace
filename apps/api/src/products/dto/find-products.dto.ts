@@ -7,11 +7,11 @@ export class FindProductsDto {
   @IsOptional()
   @Transform(({ value }) => Number(value))
   @IsInt()
-  readonly offset: number = 0;
+  readonly from: number = 0;
 
   @ApiProperty({ description: '상품수', required: false })
   @IsOptional()
   @Transform(({ value }) => Number(value))
   @IsInt()
-  readonly limit: number = 20;
+  readonly size: number = 20;
 }
