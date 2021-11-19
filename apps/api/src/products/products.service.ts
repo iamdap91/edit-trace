@@ -34,14 +34,14 @@ export class ProductsService {
     return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
   }
 
-  async find(): Promise<ProductSerializer[]> {
+  async find(from: number, size: number): Promise<ProductSerializer[]> {
     const {
       body: {
         hits: { hits },
       },
     } = await this.elasticsearchService.search({
       index: productsIndexName(),
-      body: { size: 20 },
+      body: { from, size },
     });
     return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
   }

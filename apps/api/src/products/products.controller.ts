@@ -1,7 +1,8 @@
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ClassSerializerInterceptor, Controller, Get, Param, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductSerializer } from '../serializers';
+import { FindProductsDto } from './dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -12,8 +13,9 @@ export class ProductsController {
   @Get('list')
   @ApiOperation({ summary: '상품 리스트' })
   @ApiResponse({ status: 200, type: [ProductSerializer] })
-  async find(): Promise<ProductSerializer[]> {
-    return await this.productsService.find();
+  async find(@Query() query: FindProductsDto): Promise<ProductSerializer[]> {
+    const { from, size } = query;
+    return await this.productsService.find(from, size);
   }
 
   @Get(':productId')
