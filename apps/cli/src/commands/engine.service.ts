@@ -8,10 +8,18 @@ import { flatMap } from 'lodash';
 
 import { ArrayToObject, batchAction, productsIndexName } from '@edit-trace/utils';
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
+import { EngineFactory } from '@edit-trace/engine';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
   constructor(private elasticsearchService: ElasticsearchService) {}
+
+  @Command({ command: 'run <shopCode>' })
+  async run(shopCode: string) {
+    const shopEngine = await EngineFactory.build(shopCode);
+    console.log(shopEngine);
+    return null;
+  }
 
   @Command({
     command: 'update-catalog',
