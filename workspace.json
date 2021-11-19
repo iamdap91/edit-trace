@@ -5,6 +5,7 @@
     "cli": "apps/cli",
     "config-elasticsearch": "libs/config/elasticsearch",
     "config-redis": "libs/config/redis",
+    "engine": "libs/engine",
     "utils": "libs/utils"
   }
 }
