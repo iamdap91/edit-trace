@@ -7,8 +7,8 @@ import * as readline from 'readline';
 import { flatMap } from 'lodash';
 
 import { ArrayToObject, batchAction, productsIndexName } from '@edit-trace/utils';
-import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
 import { EngineFactory } from '@edit-trace/engine';
+import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
@@ -17,7 +17,9 @@ export class EngineService {
   @Command({ command: 'run <shopCode>' })
   async run(shopCode: string) {
     const shopEngine = await EngineFactory.build(shopCode);
-    console.log(shopEngine);
+
+    shopEngine.product();
+
     return null;
   }
 
