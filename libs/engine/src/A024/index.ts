@@ -9,11 +9,8 @@ export default class Engine implements BaseEngine {
     this.service = new A024Service();
   }
 
-  @WithBrowser({
-    test: true,
-  })
-  async product(): Promise<unknown> {
-    console.log('product called');
-    return Promise.resolve(undefined);
+  @WithBrowser({ headless: false })
+  async product(targetUrl, options): Promise<unknown> {
+    return await this.service.product(targetUrl);
   }
 }

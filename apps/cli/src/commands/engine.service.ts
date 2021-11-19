@@ -18,9 +18,9 @@ export class EngineService {
   async run(shopCode: string) {
     const shopEngine = await EngineFactory.build(shopCode);
     const browserOptions = EngineFactory.scan(shopEngine);
-    // await shopEngine.product();s
 
     console.log(browserOptions);
+    const product = await shopEngine.product('http://aaaa', browserOptions);
 
     return null;
   }
