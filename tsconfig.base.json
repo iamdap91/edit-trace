@@ -17,6 +17,7 @@
     "paths": {
       "@edit-trace/config/elasticsearch": ["libs/config/elasticsearch/src/index.ts"],
       "@edit-trace/config/redis": ["libs/config/redis/src/index.ts"],
+      "@edit-trace/engine": ["libs/engine/src/index.ts"],
       "@edit-trace/utils": ["libs/utils/src/index.ts"]
     }
   },

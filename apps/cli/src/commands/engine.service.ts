@@ -7,11 +7,23 @@ import * as readline from 'readline';
 import { flatMap } from 'lodash';
 
 import { ArrayToObject, batchAction, productsIndexName } from '@edit-trace/utils';
+import { EngineFactory } from '@edit-trace/engine';
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
   constructor(private elasticsearchService: ElasticsearchService) {}
+
+  @Command({ command: 'run <shopCode>' })
+  async run(shopCode: string) {
+    const shopEngine = await EngineFactory.build(shopCode);
+    const browserOptions = EngineFactory.scan(shopEngine);
+
+    console.log(browserOptions);
+    const product = await shopEngine.product('http://aaaa', browserOptions);
+
+    return null;
+  }
 
   @Command({
     command: 'update-catalog',
