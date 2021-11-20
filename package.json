@@ -35,7 +35,8 @@
     "rxjs": "~6.6.3",
     "source-map-support": "^0.5.20",
     "swagger-ui-express": "^4.1.6",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "user-agents": "^1.0.841"
   },
   "devDependencies": {
     "@nestjs/schematics": "^7.0.0",
