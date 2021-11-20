@@ -5,14 +5,16 @@ import * as commander from 'commander';
 import * as fs from 'fs';
 import * as readline from 'readline';
 import { flatMap } from 'lodash';
+import { Redis } from 'ioredis';
 
 import { ArrayToObject, batchAction, productsIndexName } from '@edit-trace/utils';
 import { BrowserFactory, BrowserOptionInterface, EngineFactory } from '@edit-trace/engine';
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
+import { RedisService } from 'nestjs-redis';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
-  constructor(private elasticsearchService: ElasticsearchService) {}
+  constructor(private elasticsearchService: ElasticsearchService, private redisService: RedisService) {}
 
   @Command({ command: 'run <shopCode>' })
   async run(shopCode: string) {
@@ -24,6 +26,9 @@ export class EngineService {
       'https://www.bloomingdales.com/shop/product/salvatore-ferragamo-revival-leather-bifold-wallet?ID=139187&PartnerID=LINKSHARE&cm_mmc=LINKSHARE-_-n-_-n-_-n&m_sc=aff&PartnerID=LINKSHARE&utm_source=rakuten&utm_medium=affiliate&utm_campaign=affiliates&ranMID=13867&ranEAID=hA%2FO%2FiYzeic&ranSiteID=hA_O_iYzeic-wLOokMOLzssgSOrNRTRd1g&LinkshareID=hA_O_iYzeic-wLOokMOLzssgSOrNRTRd1g&ranPublisherID=hA%2FO%2FiYzeic&ranLinkID=8017580194427&ranLinkTypeID=15&pubNAME=Hied',
       browser
     );
+
+    const client: Redis = this.redisService.getClient();
+    await client.hset('product', product.toString());
 
     return null;
   }
