@@ -6,11 +6,11 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 import { flatMap } from 'lodash';
 import { Redis } from 'ioredis';
+import { RedisService } from 'nestjs-redis';
 
 import { ArrayToObject, batchAction, productsIndexName } from '@edit-trace/utils';
 import { BrowserFactory, BrowserOptionInterface, EngineFactory } from '@edit-trace/engine';
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
-import { RedisService } from 'nestjs-redis';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
