@@ -1,3 +1,3 @@
 export class EngineInterface {
-  product: (targetUrl, options) => Promise<unknown>;
+  product: (targetUrl, browser) => Promise<unknown>;
 }
