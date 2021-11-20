@@ -7,9 +7,8 @@ import * as readline from 'readline';
 import { flatMap } from 'lodash';
 
 import { ArrayToObject, batchAction, productsIndexName } from '@edit-trace/utils';
-import { BrowserOptionInterface, EngineFactory } from '@edit-trace/engine';
+import { BrowserFactory, BrowserOptionInterface, EngineFactory } from '@edit-trace/engine';
 import { ADVERTISERS, RAKUTEN_CATALOG_COLUMNS } from './constants';
-import { BrowserFactory } from '../../../../libs/engine/src/browser-factory';
 
 @Console({ name: 'engine', alias: 'eng' })
 export class EngineService {
@@ -19,11 +18,12 @@ export class EngineService {
   async run(shopCode: string) {
     const shopEngine = await EngineFactory.build(shopCode);
     const browserOptions: BrowserOptionInterface = EngineFactory.scan(shopEngine);
-    const browser = await BrowserFactory.createBrowser(browserOptions);
 
-    console.log(browserOptions);
-    const product = await shopEngine.product('http://aaaa', browserOptions);
-    console.log(product);
+    const browser = await BrowserFactory.createBrowser(browserOptions);
+    const product = await shopEngine.product(
+      'https://www.bloomingdales.com/shop/product/salvatore-ferragamo-revival-leather-bifold-wallet?ID=139187&PartnerID=LINKSHARE&cm_mmc=LINKSHARE-_-n-_-n-_-n&m_sc=aff&PartnerID=LINKSHARE&utm_source=rakuten&utm_medium=affiliate&utm_campaign=affiliates&ranMID=13867&ranEAID=hA%2FO%2FiYzeic&ranSiteID=hA_O_iYzeic-wLOokMOLzssgSOrNRTRd1g&LinkshareID=hA_O_iYzeic-wLOokMOLzssgSOrNRTRd1g&ranPublisherID=hA%2FO%2FiYzeic&ranLinkID=8017580194427&ranLinkTypeID=15&pubNAME=Hied',
+      browser
+    );
 
     return null;
   }

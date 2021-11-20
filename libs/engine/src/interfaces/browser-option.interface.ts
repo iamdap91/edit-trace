@@ -1,4 +1,5 @@
-export interface BrowserOptionInterface {
-  headless?: boolean;
+import { BrowserLaunchArgumentOptions, LaunchOptions } from 'puppeteer';
+
+export interface BrowserOptionInterface extends LaunchOptions, BrowserLaunchArgumentOptions {
   fastMode?: boolean;
 }
