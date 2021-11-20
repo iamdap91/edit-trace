@@ -1,8 +1,8 @@
-import { EngineInterface } from './interfaces';
+import { EngineInterface, FormattedProductInterface } from './interfaces';
 
 export class BaseEngine implements EngineInterface {
-  async product(targetUrl, options);
-  async product() {
+  async product(targetUrl, browser): Promise<FormattedProductInterface>;
+  async product(): Promise<FormattedProductInterface> {
     throw new Error('product 기능 개발중');
   }
 }

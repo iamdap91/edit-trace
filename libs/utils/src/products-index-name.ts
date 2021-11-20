@@ -1,4 +1,4 @@
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 export function productsIndexName() {
   return `products-${dayjs().format('YYYYMMDD')}`;
