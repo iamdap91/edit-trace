@@ -3,6 +3,7 @@ import { Browser } from 'puppeteer';
 import { BaseEngine } from '../base-engine';
 import { WithBrowser } from '../decorator/with-browser';
 import { BrowserFactory } from '../browser-factory';
+import { FormattedProductInterface } from '../interfaces';
 import { A024Service } from './A024.service';
 
 export default class Engine implements BaseEngine {
@@ -13,7 +14,7 @@ export default class Engine implements BaseEngine {
   }
 
   @WithBrowser({ headless: true })
-  async product(url: string, browser: Browser): Promise<unknown> {
+  async product(url: string, browser: Browser): Promise<FormattedProductInterface> {
     const page = await BrowserFactory.getPage(browser);
     return await this.service.product(url, page);
   }

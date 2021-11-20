@@ -1,4 +1,5 @@
 import { Page } from 'puppeteer';
+import { flatMap } from 'lodash';
 import { NativeProductAPIResponse } from './interfaces';
 
 export class A024Service {
@@ -11,7 +12,7 @@ export class A024Service {
     const apiResponse: NativeProductAPIResponse = await response.json();
     if (apiResponse?.review?.hasError) throw new Error('상품정보를 로드하는 중에 에러가 발생하였습니다.');
 
-    return apiResponse?.review?.includes?.products;
+    return flatMap(apiResponse?.review?.includes?.products)?.[0];
   }
 
   private static async interceptResponse(page: Page) {
