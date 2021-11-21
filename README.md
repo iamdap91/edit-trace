@@ -15,7 +15,7 @@
 - `npm install`
 
 ### how to run container
-- `docker-compose up -d`
+- `docker-compose up -d` (아직은 elasticsearch, redis 컨테이너만 사용)
 
 ### how to serve API
 - `nx serve api`
