@@ -1,8 +1,8 @@
 import { Browser } from 'puppeteer';
 
 import { BaseEngine } from '../base-engine';
-import { WithBrowser } from '../decorator/with-browser';
-import { BrowserFactory } from '../browser-factory';
+import { WithBrowser } from '../decorators/with-browser';
+import { BrowserFactory } from '../factories';
 import { FormattedProductInterface } from '../interfaces';
 import { A024Service } from './A024.service';
 

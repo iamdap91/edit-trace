@@ -2,7 +2,7 @@ import { Browser, Page } from 'puppeteer';
 import UserAgent from 'user-agents';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { BrowserOptionInterface } from './interfaces';
+import { BrowserOptionInterface } from '../interfaces';
 
 export class BrowserFactory {
   static async createBrowser(options: BrowserOptionInterface): Promise<Browser> {
