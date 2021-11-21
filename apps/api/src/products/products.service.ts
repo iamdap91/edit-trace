@@ -3,10 +3,15 @@ import { plainToClass } from 'class-transformer';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { productsIndexName } from '@edit-trace/utils';
 import { ProductSerializer } from '../serializers';
+import { RedisService } from 'nestjs-redis';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class ProductsService {
-  constructor(private elasticsearchService: ElasticsearchService) {}
+  client: Redis;
+  constructor(private elasticsearchService: ElasticsearchService, private redisService: RedisService) {
+    this.client = this.redisService.getClient();
+  }
 
   async findOne(productId: string): Promise<ProductSerializer> {
     const { body } = await this.elasticsearchService.get({

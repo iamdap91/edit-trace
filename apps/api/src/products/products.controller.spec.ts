@@ -27,7 +27,8 @@ describe('ProductsController', () => {
   });
 
   it('find', async () => {
-    const products = await controller.find();
+    const products = await controller.find({ from: 10, size: 20 });
     expect(typeof products.length).toEqual('number');
+    expect(products.length).toEqual(20);
   });
 });
