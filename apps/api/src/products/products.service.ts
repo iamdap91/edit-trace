@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { productsIndexName } from '@edit-trace/utils';
-import { ProductSerializer, RakutenProductSerializer } from '../serializers';
-import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
+import { RedisService } from 'nestjs-redis';
+import { plainToClass } from 'class-transformer';
+import { Injectable } from '@nestjs/common';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
+
+import { productsIndexName } from '@edit-trace/utils';
+
+import { ProductSerializer, RakutenProductSerializer } from '../serializers';
 
 @Injectable()
 export class ProductsService {
