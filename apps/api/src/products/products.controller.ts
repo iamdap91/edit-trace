@@ -1,7 +1,7 @@
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { ProductSerializer } from '../serializers';
+import { ProductSerializer, RakutenProductSerializer } from '../serializers';
 import { FindProductsDto } from './dto';
 
 @ApiTags('products')
@@ -12,23 +12,23 @@ export class ProductsController {
 
   @Get('list')
   @ApiOperation({ summary: '상품 리스트' })
-  @ApiResponse({ status: 200, type: [ProductSerializer] })
-  async find(@Query() query: FindProductsDto): Promise<ProductSerializer[]> {
+  @ApiResponse({ status: 200, type: [RakutenProductSerializer] })
+  async find(@Query() query: FindProductsDto): Promise<RakutenProductSerializer[]> {
     const { from, size } = query;
     return await this.productsService.find(from, size);
   }
 
   @Get(':productId')
   @ApiOperation({ summary: '단일 상품 정보' })
-  @ApiResponse({ status: 200, type: ProductSerializer })
+  @ApiResponse({ status: 200, type: [ProductSerializer] })
   async findOne(@Param('productId') productId: string): Promise<ProductSerializer> {
     return await this.productsService.findOne(productId);
   }
 
   @Get(':productId/history')
   @ApiOperation({ summary: '단일 상품 히스토리' })
-  @ApiResponse({ status: 200, type: [ProductSerializer] })
-  async findOneHistory(@Param('productId') productId: string): Promise<ProductSerializer[]> {
+  @ApiResponse({ status: 200, type: [RakutenProductSerializer] })
+  async findOneHistory(@Param('productId') productId: string): Promise<RakutenProductSerializer[]> {
     return await this.productsService.findOneHistory(productId);
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { productsIndexName } from '@edit-trace/utils';
-import { ProductSerializer } from '../serializers';
+import { ProductSerializer, RakutenProductSerializer } from '../serializers';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 
@@ -14,14 +14,21 @@ export class ProductsService {
   }
 
   async findOne(productId: string): Promise<ProductSerializer> {
+    const cachedProduct = await this.client.hget('product', productId);
+    if (cachedProduct) return { cached: true, product: JSON.parse(cachedProduct) };
+
     const { body } = await this.elasticsearchService.get({
       index: productsIndexName(),
       id: productId,
     });
-    return plainToClass(ProductSerializer, body._source, { excludeExtraneousValues: true });
+
+    return {
+      cached: false,
+      product: plainToClass(ProductSerializer, { product: body._source }, { excludeExtraneousValues: true }),
+    };
   }
 
-  async findOneHistory(productId: string): Promise<ProductSerializer[]> {
+  async findOneHistory(productId: string): Promise<RakutenProductSerializer[]> {
     const {
       body: {
         hits: { hits },
@@ -36,10 +43,10 @@ export class ProductsService {
       },
     });
 
-    return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
+    return hits.map((hit) => plainToClass(RakutenProductSerializer, hit._source, { excludeExtraneousValues: true }));
   }
 
-  async find(from: number, size: number): Promise<ProductSerializer[]> {
+  async find(from: number, size: number): Promise<RakutenProductSerializer[]> {
     const {
       body: {
         hits: { hits },
@@ -48,6 +55,6 @@ export class ProductsService {
       index: productsIndexName(),
       body: { from, size },
     });
-    return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
+    return hits.map((hit) => plainToClass(RakutenProductSerializer, hit._source, { excludeExtraneousValues: true }));
   }
 }
