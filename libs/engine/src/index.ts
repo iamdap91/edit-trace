@@ -1,4 +1,3 @@
-export * from './engine-factory';
-export * from './browser-factory';
+export * from './factories';
 export * from './base-engine';
 export * from './interfaces';
