@@ -40,7 +40,7 @@
 ```
 
 ***
-## Links
+## Project Detail
 
 - [api](apps/api/README.md)
 - [cli](apps/cli/README.md)
