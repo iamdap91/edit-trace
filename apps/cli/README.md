@@ -14,6 +14,6 @@ engine
 
 elasticsearch
 - create-index : ES에 인덱스를 생성하는 명렁어
-- re-index <target> <result>: 리인덱스 명령어
+- re-index <source> <dest>: 리인덱스 명령어
 ```
 
