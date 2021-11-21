@@ -27,4 +27,16 @@ export class EsCommandService {
 
     if (acknowledged) console.log(`${index} 인덱스 생성됨`);
   }
+
+  @Command({
+    command: 're-index <source> <dest>',
+  })
+  async reIndex(source: string, dest: string) {
+    await this.elasticsearchService.reindex({
+      body: {
+        source: { index: source },
+        dest: { index: dest },
+      },
+    });
+  }
 }
