@@ -83,6 +83,7 @@ export class EngineService {
 
       const productsInShop = lines.map((line) => ({
         '@timestamp': new Date(),
+        shopCode: advertiser.shopCode,
         ...ArrayToObject(
           line.split('|').map((el) => el.trim()),
           RAKUTEN_CATALOG_COLUMNS
