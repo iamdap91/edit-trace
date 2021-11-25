@@ -1,9 +1,9 @@
 import { Browser } from 'puppeteer';
 
+import { SyncedProductSerializer } from '@edit-trace/models';
 import { BaseEngine } from '../base-engine';
 import { WithBrowser } from '../decorators/with-browser';
 import { BrowserFactory } from '../factories';
-import { FormattedProductInterface } from '../interfaces';
 import { A025Service } from './A025.service';
 
 export default class Engine implements BaseEngine {
@@ -14,7 +14,7 @@ export default class Engine implements BaseEngine {
   }
 
   @WithBrowser({ headless: true })
-  async product(url: string, browser: Browser): Promise<FormattedProductInterface> {
+  async product(url: string, browser: Browser): Promise<SyncedProductSerializer> {
     const page = await BrowserFactory.getPage(browser);
     return await this.service.product(url, page);
   }

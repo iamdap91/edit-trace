@@ -1,7 +1,7 @@
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
+import { CachedProductSerializer, ProductSerializer } from '@edit-trace/models';
 import { ProductsService } from './products.service';
-import { ProductSerializer } from '../serializers';
 import { FindProductsDto } from './dto';
 
 @ApiTags('products')
@@ -19,12 +19,12 @@ export class ProductsController {
     return await this.productsService.find(from, size);
   }
 
-  // @Get(':productId')
-  // @ApiOperation({ summary: '단일 상품 정보' })
-  // @ApiResponse({ status: 200, type: [ProductSerializer] })
-  // async findOne(@Param('productId') productId: string): Promise<ProductSerializer> {
-  //   return await this.productsService.findOne(productId);
-  // }
+  @Get(':productId')
+  @ApiOperation({ summary: '단일 상품 정보' })
+  @ApiResponse({ status: 200, type: [CachedProductSerializer] })
+  async findOne(@Param('productId') productId: string): Promise<CachedProductSerializer> {
+    return await this.productsService.findOne(productId);
+  }
 
   @Get(':productId/history')
   @ApiOperation({ summary: '단일 상품 히스토리' })

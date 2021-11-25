@@ -5,8 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 import { productsIndexName } from '@edit-trace/utils';
-
-import { ProductSerializer } from '../serializers';
+import { CachedProductSerializer, ProductSerializer } from '@edit-trace/models';
 
 @Injectable()
 export class ProductsService {
@@ -15,20 +14,12 @@ export class ProductsService {
     this.client = this.redisService.getClient();
   }
 
-  // async findOne(productId: string): Promise<ProductSerializer> {
-  //   const cachedProduct = await this.client.hget('product', productId);
-  //   if (cachedProduct) return { cached: true, product: JSON.parse(cachedProduct) };
-  //
-  //   const { body } = await this.elasticsearchService.get({
-  //     index: productsIndexName(),
-  //     id: productId,
-  //   });
-  //
-  //   return {
-  //     cached: false,
-  //     product: plainToClass(ProductSerializer, { product: body._source }, { excludeExtraneousValues: true }),
-  //   };
-  // }
+  async findOne(productId: string): Promise<CachedProductSerializer> {
+    const cachedProduct = await this.client.hget('product', productId);
+    if (cachedProduct) return { cached: true, product: JSON.parse(cachedProduct) };
+
+    return { cached: false, product: null };
+  }
 
   async findOneHistory(productId: string): Promise<ProductSerializer[]> {
     const {

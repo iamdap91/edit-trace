@@ -1,5 +1,5 @@
-import { FormattedProductInterface } from './formatted-product.interface';
+import { SyncedProductSerializer } from '@edit-trace/models';
 
 export class EngineInterface {
-  product: (targetUrl, browser) => Promise<FormattedProductInterface>;
+  product: (targetUrl, browser) => Promise<SyncedProductSerializer>;
 }
