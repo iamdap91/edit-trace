@@ -76,13 +76,14 @@ export class EngineService {
     await EngineService.downloadCatalog(catalogPath);
 
     spin.info('상품 벌크 인서트');
+    const timestamp = new Date();
     for (const advertiser of ADVERTISERS) {
       spin.info(`${advertiser.name} 업데이트`);
       const lines = await this.readFile(`${catalogPath}/${advertiser.mid}_${RAKUTEN_SITE_ID}_mp.txt`);
       spin.info(`${advertiser.name} 상품 수 : ${lines?.length}`);
 
       const productsInShop = lines.map((line) => ({
-        '@timestamp': new Date(),
+        timestamp,
         shopCode: advertiser.shopCode,
         ...ArrayToObject(
           line.split('|').map((el) => el.trim()),
