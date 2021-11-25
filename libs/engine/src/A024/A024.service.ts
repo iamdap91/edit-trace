@@ -3,9 +3,14 @@ import { Page } from 'puppeteer';
 export class A024Service {
   async product(url: string, page: Page) {
     await page.goto(url, { waitUntil: 'domcontentloaded' });
-    return await page.evaluate(() =>
+    const response = await page.evaluate(() =>
       fetch(`https://www.bloomingdales.com/xapi/digital/v1/product/139187`).then((res) => res?.json())
     );
+
+    const product = response?.product?.[0];
+    if (!product) throw new Error('상품 정보 로드 실패');
+
+    return product;
   }
 
   // todo 나중에 기능 분리해서 다른데서 써먹자

@@ -42,7 +42,7 @@ export class EngineService {
 
     spin.info('Save product data in Cache(Redis)');
     const client: Redis = this.redisService.getClient();
-    await client.hset('product', product?.productId, JSON.stringify(product));
+    await client.hset('product', product?.id, JSON.stringify(product));
 
     spin.info('Done');
     spin.clear();
