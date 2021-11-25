@@ -3,6 +3,11 @@ import { SyncedProductSerializer } from '@edit-trace/models';
 
 export class A024Service {
   async product(url: string, page: Page) {
+    await page.setCookie({
+      name: 'currency',
+      value: 'USD',
+      url: 'https://www.bloomingdales.com',
+    });
     const productId = new URL(url)?.searchParams.get('ID');
     await page.goto(url, { waitUntil: 'domcontentloaded' });
     const response = await page.evaluate(
