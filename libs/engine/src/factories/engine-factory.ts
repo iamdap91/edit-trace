@@ -3,7 +3,7 @@ import { WITH_BROWSER_META_DATA } from '../constants';
 
 export class EngineFactory {
   static async build(shopCode: string): Promise<EngineInterface> {
-    const engineModule = await import(`./${shopCode}/index`);
+    const engineModule = await import(`../${shopCode}/index`);
 
     const engine = new engineModule['default']();
     if (!engine) {
