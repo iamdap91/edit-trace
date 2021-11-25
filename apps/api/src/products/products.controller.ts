@@ -1,7 +1,7 @@
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
+import { ProductSerializer } from '@edit-trace/models';
 import { ProductsService } from './products.service';
-import { ProductSerializer } from '../serializers';
 import { FindProductsDto } from './dto';
 
 @ApiTags('products')

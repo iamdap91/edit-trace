@@ -5,8 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 import { productsIndexName } from '@edit-trace/utils';
-
-import { ProductSerializer } from '../serializers';
+import { ProductSerializer } from '@edit-trace/models';
 
 @Injectable()
 export class ProductsService {
