@@ -1,20 +1,19 @@
 import { Page } from 'puppeteer';
-import { flatMap } from 'lodash';
-import { NativeProductAPIResponse } from './interfaces';
 
 export class A024Service {
   async product(url: string, page: Page) {
-    const pageMove = page.goto(url, { waitUntil: 'domcontentloaded' });
-    const response = await A024Service.interceptResponse(page);
-    const pageRes = await pageMove;
-    if (pageRes.status() === 404) throw new Error('삭제된 상품입니다.');
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    const response = await page.evaluate(() =>
+      fetch(`https://www.bloomingdales.com/xapi/digital/v1/product/139187`).then((res) => res?.json())
+    );
 
-    const apiResponse: NativeProductAPIResponse = await response.json();
-    if (apiResponse?.review?.hasError) throw new Error('상품정보를 로드하는 중에 에러가 발생하였습니다.');
+    const product = response?.product?.[0];
+    if (!product) throw new Error('상품 정보 로드 실패');
 
-    return flatMap(apiResponse?.review?.includes?.products)?.[0];
+    return product;
   }
 
+  // todo 나중에 기능 분리해서 다른데서 써먹자
   private static async interceptResponse(page: Page) {
     let res;
     try {

@@ -6,7 +6,7 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 import { productsIndexName } from '@edit-trace/utils';
 
-import { ProductSerializer, RakutenProductSerializer } from '../serializers';
+import { ProductSerializer } from '../serializers';
 
 @Injectable()
 export class ProductsService {
@@ -15,22 +15,22 @@ export class ProductsService {
     this.client = this.redisService.getClient();
   }
 
-  async findOne(productId: string): Promise<ProductSerializer> {
-    const cachedProduct = await this.client.hget('product', productId);
-    if (cachedProduct) return { cached: true, product: JSON.parse(cachedProduct) };
+  // async findOne(productId: string): Promise<ProductSerializer> {
+  //   const cachedProduct = await this.client.hget('product', productId);
+  //   if (cachedProduct) return { cached: true, product: JSON.parse(cachedProduct) };
+  //
+  //   const { body } = await this.elasticsearchService.get({
+  //     index: productsIndexName(),
+  //     id: productId,
+  //   });
+  //
+  //   return {
+  //     cached: false,
+  //     product: plainToClass(ProductSerializer, { product: body._source }, { excludeExtraneousValues: true }),
+  //   };
+  // }
 
-    const { body } = await this.elasticsearchService.get({
-      index: productsIndexName(),
-      id: productId,
-    });
-
-    return {
-      cached: false,
-      product: plainToClass(ProductSerializer, { product: body._source }, { excludeExtraneousValues: true }),
-    };
-  }
-
-  async findOneHistory(productId: string): Promise<RakutenProductSerializer[]> {
+  async findOneHistory(productId: string): Promise<ProductSerializer[]> {
     const {
       body: {
         hits: { hits },
@@ -45,10 +45,10 @@ export class ProductsService {
       },
     });
 
-    return hits.map((hit) => plainToClass(RakutenProductSerializer, hit._source, { excludeExtraneousValues: true }));
+    return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
   }
 
-  async find(from: number, size: number): Promise<RakutenProductSerializer[]> {
+  async find(from: number, size: number): Promise<ProductSerializer[]> {
     const {
       body: {
         hits: { hits },
@@ -57,6 +57,6 @@ export class ProductsService {
       index: productsIndexName(),
       body: { from, size },
     });
-    return hits.map((hit) => plainToClass(RakutenProductSerializer, hit._source, { excludeExtraneousValues: true }));
+    return hits.map((hit) => plainToClass(ProductSerializer, hit._source, { excludeExtraneousValues: true }));
   }
 }

@@ -1,4 +1,4 @@
 export interface FormattedProductInterface {
-  productId: number | string;
+  id: number | string;
   [key: string]: unknown;
 }
