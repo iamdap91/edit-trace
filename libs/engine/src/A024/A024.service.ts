@@ -2,9 +2,11 @@ import { Page } from 'puppeteer';
 
 export class A024Service {
   async product(url: string, page: Page) {
+    const productId = new URL(url)?.searchParams.get('ID');
+
     await page.goto(url, { waitUntil: 'domcontentloaded' });
     const response = await page.evaluate(() =>
-      fetch(`https://www.bloomingdales.com/xapi/digital/v1/product/139187`).then((res) => res?.json())
+      fetch(`https://www.bloomingdales.com/xapi/digital/v1/product/${productId}`).then((res) => res?.json())
     );
 
     const product = response?.product?.[0];
