@@ -6,6 +6,7 @@
     "config-elasticsearch": "libs/config/elasticsearch",
     "config-redis": "libs/config/redis",
     "engine": "libs/engine",
+    "lambda-product-sync": "apps/lambda/product-sync",
     "models": "libs/models",
     "utils": "libs/utils"
   }
