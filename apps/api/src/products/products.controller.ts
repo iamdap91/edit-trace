@@ -1,8 +1,8 @@
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ClassSerializerInterceptor, Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Query, UseInterceptors } from '@nestjs/common';
 import { CachedProductSerializer, ProductSerializer } from '@edit-trace/models';
 import { ProductsService } from './products.service';
-import { FindProductsDto } from './dto';
+import { FindProductsDto, SyncProductDto } from './dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -23,7 +23,7 @@ export class ProductsController {
   @ApiOperation({ summary: '단일 상품 정보' })
   @ApiResponse({ status: 200, type: [CachedProductSerializer] })
   async findOne(@Param('productId') productId: string): Promise<CachedProductSerializer> {
-    return await this.productsService.findOne(productId);
+    return await this.productsService.findOneCache(productId);
   }
 
   @Get(':productId/history')
@@ -31,5 +31,11 @@ export class ProductsController {
   @ApiResponse({ status: 200, type: [ProductSerializer] })
   async findOneHistory(@Param('productId') productId: string): Promise<ProductSerializer[]> {
     return await this.productsService.findOneHistory(productId);
+  }
+
+  @Post(':productId/sync')
+  @ApiOperation({ summary: '상품 싱크' })
+  async sync(@Body() body: SyncProductDto) {
+    await this.productsService.sync(body.productId);
   }
 }

@@ -8,6 +8,8 @@ export class ProductSerializer {
 
   @ApiProperty() @Expose() timestamp: string;
 
+  @ApiProperty() @Expose() shopCode: string;
+
   @ApiProperty() @Expose() productId: string;
 
   @ApiProperty() @Expose() productName: string;
