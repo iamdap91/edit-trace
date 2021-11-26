@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  build:
+    image: lambda-product-sync:${TAG}
+    build:
+      context: ../../
+      dockerfile: .deploy/lambda-product-sync/Dockerfile

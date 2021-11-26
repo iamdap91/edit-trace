@@ -20,6 +20,7 @@
     "@nestjs/elasticsearch": "^8.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/swagger": "^4.8.2",
+    "axios": "^0.24.0",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "commander": "^5.1.0",

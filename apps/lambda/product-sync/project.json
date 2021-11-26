@@ -1,0 +1,52 @@
+{
+  "root": "apps/lambda/product-sync",
+  "sourceRoot": "apps/lambda/product-sync/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "generatePackageJson": true,
+        "outputPath": "dist/apps/lambda/product-sync",
+        "main": "apps/lambda/product-sync/src/main.ts",
+        "tsConfig": "apps/lambda/product-sync/tsconfig.app.json"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/lambda/product-sync/src/environments/environment.ts",
+              "with": "apps/lambda/product-sync/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:execute",
+      "options": {
+        "buildTarget": "lambda-product-sync:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/lambda/product-sync/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/lambda/product-sync"],
+      "options": {
+        "jestConfig": "apps/lambda/product-sync/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
