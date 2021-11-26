@@ -34,7 +34,8 @@
 +-- apps
     +-- api
     +-- cli
-    
+    +-- lambda
+        +-- product-sync
 +-- lib
     +-- config
     +-- engine   
@@ -47,5 +48,6 @@
 
 - [api](apps/api/README.md)
 - [cli](apps/cli/README.md)
+- [lambda/product-sync](apps/lambda/product-sync/README.md)
 
 
