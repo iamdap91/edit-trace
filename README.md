@@ -79,6 +79,6 @@
 |저장소|Mysql, Elasticsearch|Elasticsearch, Redis|
 |수집 속도(100~130만건 기준)|12~14h|5m~7m|
 |모든 상품 수집|O|O|
-|상품 정보 저장|O|△ (REDIS에 조건부로 저장)|
+|상품 정보 저장|O|△ (REDIS에 당일자 상품만 저장)|
 |상품 정보 히스토리 추적|X|O|
 
